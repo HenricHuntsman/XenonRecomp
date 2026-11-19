@@ -1,0 +1,26 @@
+name: SwitchLinux NSO header audit (synthetic)
+
+on:
+  push:
+    paths:
+      - 'SwitchLinux/Tools/**'
+      - '.github/workflows/switchlinux-nso-audit.yml'
+  pull_request:
+    paths:
+      - 'SwitchLinux/Tools/**'
+      - '.github/workflows/switchlinux-nso-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-nso-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run isolated, game-free NSO metadata regression tests
+        run: python3 -m unittest discover -s SwitchLinux/Tools -p 'test_*.py' -v
+      - name: Validate script syntax
+        run: python3 -m py_compile SwitchLinux/Tools/nso_audit.py SwitchLinux/Tools/test_nso_audit.py
